@@ -2,7 +2,7 @@
   <div class="container-card">
     <div class="card">
       {{ pregunta }}
-      <h1>{{ pregunta.question }}</h1>
+      <h1>{{ enconde }}</h1>
       <label>
         <input
           type="radio"
@@ -81,7 +81,10 @@ export default {
       pregunta.value.incorrect_answers.forEach((element) => {
         arrayAnswer.value.push(element);
       });
-      console.log(arrayAnswer);
+      arrayAnswer.value = arrayAnswer.value.map((i) => {
+        return unescape(i);
+      });
+      console.log(arrayAnswer, enconde);
     };
 
     const comprobar = () => {
@@ -99,6 +102,9 @@ export default {
       arrayAnswer.value = [];
       crearArray();
     };
+    const enconde = computed(() => {
+      return unescape(pregunta.value.question);
+    });
 
     crearArray();
     return {
@@ -108,6 +114,7 @@ export default {
       arrayAnswer,
       random,
       comprobar,
+      enconde,
     };
   },
 };

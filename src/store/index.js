@@ -13,7 +13,7 @@ export default createStore({
     async getPreguntas({ commit }) {
       try {
         const res = await fetch(
-          `https://opentdb.com/api.php?amount=10&type=multiple`
+          `https://opentdb.com/api.php?amount=10&encode=url3986&type=multiple`
         );
         const data = await res.json();
         await commit("setTrivia", data.results);
