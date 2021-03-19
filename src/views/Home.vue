@@ -1,18 +1,20 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Hi welcome to Trivena</h1>
+    <router-link to="/play">Let's Go</router-link>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import { computed, onMounted } from "@vue/runtime-core";
+import { useStore } from "vuex";
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
+  setup() {
+    const store = useStore();
+    onMounted(async () => {
+      await store.dispatch("fetchData");
+    });
+  },
+};
 </script>
