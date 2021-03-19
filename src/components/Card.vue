@@ -1,43 +1,49 @@
 <template>
   <div class="container-card">
     <div class="card">
-      <h2>{{ pregunta.question }}</h2>
-      <h4>{{ pregunta.category }}</h4>
-      <input type="radio" name="curso" value="correcto" v-model="picked" />
-      {{ pregunta.correct_answer }}
-      <div>
-        <label>
-          <input
-            type="radio"
-            name="curso"
-            value="incorrecto"
-            v-model="picked"
-          />
-          {{ pregunta.incorrect_answers[0] }}
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="curso"
-            value="incorrecto"
-            v-model="picked"
-            checked
-          />
-          {{ pregunta.incorrect_answers[1] }}
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="curso"
-            value="incorrecto"
-            v-model="picked"
-          />
-          {{ pregunta.incorrect_answers[2] }}
-        </label>
-      </div>
-      <span v-if="picked == 'incorrecto'">Pregunta incorrecta</span>
-      <button @click="validar">Siguiente</button>
+      {{ pregunta }}
+      <h1>{{ pregunta.question }}</h1>
+      <label>
+        <input
+          type="radio"
+          name="curso"
+          :value="arrayAnswer[random[0]]"
+          v-model="picked"
+        />
+        {{ arrayAnswer[random[0]] }}
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="curso"
+          :value="arrayAnswer[random[1]]"
+          v-model="picked"
+        />
+        {{ arrayAnswer[random[1]] }}
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="curso"
+          :value="arrayAnswer[random[2]]"
+          v-model="picked"
+        />
+        {{ arrayAnswer[random[2]] }}
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="curso"
+          :value="arrayAnswer[random[3]]"
+          v-model="picked"
+        />
+        {{ arrayAnswer[random[3]] }}
+      </label>
+      <br />
+      {{ picked }}
     </div>
+    <span v-if="picked == ''">Rellena una respuesta</span>
+    <button @click="comprobar">+</button>
   </div>
 </template>
 
@@ -45,32 +51,63 @@
 import { ref } from "@vue/reactivity";
 import router from "@/router";
 import { useStore } from "vuex";
-import { computed } from "@vue/runtime-core";
+import { computed, onUnmounted } from "@vue/runtime-core";
+import RadioButton from "./RadioButton.vue";
 export default {
-  props: ["pregunta"],
+  components: { RadioButton },
   setup() {
+    const store = useStore();
+
     const picked = ref("");
     const contador = ref(0);
-    const store = useStore();
+
     const preguntas = store.state.preguntas;
-    const validar = () => {
-      if (contador.value === 9) {
+    const pregunta = ref([]);
+    const arrayAnswer = ref([]);
+    const lista = ref([0, 1, 2, 3]);
+    const random = ref([]);
+
+    const generateRan = () => {
+      lista.value = lista.value.sort(function() {
+        return Math.random() - 0.5;
+      });
+      random.value = lista.value;
+    };
+
+    const crearArray = () => {
+      pregunta.value = preguntas[contador.value];
+      generateRan();
+      arrayAnswer.value.push(pregunta.value.correct_answer);
+      pregunta.value.incorrect_answers.forEach((element) => {
+        arrayAnswer.value.push(element);
+      });
+      console.log(arrayAnswer);
+    };
+
+    const comprobar = () => {
+      if (contador === 9) {
         router.push("/");
-      } else if (picked.value == "correcto") {
-        console.log("siguiente!!");
-        contador.value++;
+      } else if (picked.value === pregunta.value.correct_answer) {
+        console.log("ganaste");
+        siguiente();
+        picked.value = "";
       }
     };
-    const pregunta = computed(() => {
-      return preguntas[contador.value];
-    });
 
+    const siguiente = () => {
+      contador.value++;
+      arrayAnswer.value = [];
+      crearArray();
+    };
+
+    crearArray();
     return {
-      preguntas,
+      picked,
       contador,
       pregunta,
-      picked,
-      validar,
+      arrayAnswer,
+      random,
+      comprobar,
     };
   },
 };

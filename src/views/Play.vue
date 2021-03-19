@@ -12,11 +12,6 @@ export default {
   },
   setup() {
     const store = useStore();
-    const preguntas = store.state.preguntas;
-
-    return {
-      preguntas,
-    };
   },
 };
 </script>

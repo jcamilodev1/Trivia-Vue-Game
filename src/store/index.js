@@ -10,7 +10,7 @@ export default createStore({
     },
   },
   actions: {
-    async fetchData({ commit }) {
+    async getPreguntas({ commit }) {
       try {
         const res = await fetch(
           `https://opentdb.com/api.php?amount=10&type=multiple`

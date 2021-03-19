@@ -13,7 +13,7 @@ export default {
   setup() {
     const store = useStore();
     onMounted(async () => {
-      await store.dispatch("fetchData");
+      await store.dispatch("getPreguntas");
     });
   },
 };
