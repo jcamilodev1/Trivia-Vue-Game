@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h1>Hi welcome to Trivena</h1>
-    <router-link to="/play">Let's Go</router-link>
+    <router-link to="/play" class="button-init">Let's Go</router-link>
   </div>
 </template>
 
@@ -18,3 +18,21 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.home {
+  max-width: 650px;
+}
+h1 {
+  margin-bottom: 80px;
+}
+.button-init {
+  background-color: #42b983;
+  padding: 20px;
+  border-radius: 10px;
+}
+a {
+  color: white;
+  text-decoration: none;
+}
+</style>

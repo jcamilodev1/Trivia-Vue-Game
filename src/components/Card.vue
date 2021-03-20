@@ -1,8 +1,8 @@
 <template>
   <div class="container-card">
     <div class="card">
-      {{ pregunta }}
       <h1>{{ enconde }}</h1>
+      <h5>{{ category }}</h5>
       <label>
         <input
           type="radio"
@@ -40,10 +40,11 @@
         {{ arrayAnswer[random[3]] }}
       </label>
       <br />
-      {{ picked }}
     </div>
-    <span v-if="picked == ''">Rellena una respuesta</span>
-    <button @click="comprobar">+</button>
+    <span v-if="picked == ''" class="rellena">Select an answer</span>
+    <span v-if="mostrar" class="rellena">Incorrect answer</span>
+
+    <button @click="comprobar">Check</button>
   </div>
 </template>
 
@@ -57,7 +58,7 @@ export default {
   components: { RadioButton },
   setup() {
     const store = useStore();
-
+    const mostrar = ref(false);
     const picked = ref("");
     const contador = ref(0);
 
@@ -91,9 +92,12 @@ export default {
       if (contador === 9) {
         router.push("/");
       } else if (picked.value === pregunta.value.correct_answer) {
+        mostrar.value = false;
         console.log("ganaste");
         siguiente();
         picked.value = "";
+      } else {
+        mostrar.value = true;
       }
     };
 
@@ -105,6 +109,9 @@ export default {
     const enconde = computed(() => {
       return unescape(pregunta.value.question);
     });
+    const category = computed(() => {
+      return unescape(pregunta.value.category);
+    });
 
     crearArray();
     return {
@@ -115,9 +122,48 @@ export default {
       random,
       comprobar,
       enconde,
+      category,
+      mostrar,
     };
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.container-card {
+  max-width: 600px;
+  padding: 30px;
+}
+h1 {
+  margin-bottom: 5px;
+}
+h5 {
+  color: #2c3e509a;
+  font-size: 10px;
+  margin-bottom: 40px;
+}
+label {
+  display: block;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: initial;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.219);
+}
+label input {
+  margin-right: 15px;
+}
+button {
+  cursor: pointer;
+  border: none;
+  padding: 20px 40px;
+  border-radius: 15px;
+  color: white;
+  background-color: #42b983;
+}
+.rellena {
+  display: block;
+  font-size: 12px;
+  color: red;
+  margin-bottom: 10px;
+}
+</style>
