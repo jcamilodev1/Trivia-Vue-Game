@@ -44,7 +44,7 @@
     <span v-if="picked == ''" class="rellena">Select an answer</span>
     <span v-if="mostrar" class="rellena">Incorrect answer</span>
 
-    <button @click="comprobar">Check</button>
+    <button @click="comprobar()">Check</button>
   </div>
 </template>
 
@@ -85,13 +85,14 @@ export default {
       arrayAnswer.value = arrayAnswer.value.map((i) => {
         return unescape(i);
       });
-      console.log(arrayAnswer, enconde);
+      console.log(pregunta);
     };
 
     const comprobar = () => {
+      const res = unescape(pregunta.value.correct_answer);
       if (contador === 9) {
         router.push("/");
-      } else if (picked.value === pregunta.value.correct_answer) {
+      } else if (picked.value === res) {
         mostrar.value = false;
         console.log("ganaste");
         siguiente();
