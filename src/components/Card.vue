@@ -52,40 +52,46 @@
 import { ref } from "@vue/reactivity";
 import router from "@/router";
 import { useStore } from "vuex";
-import { computed, onUnmounted } from "@vue/runtime-core";
+import { computed, onMounted } from "@vue/runtime-core";
 import RadioButton from "./RadioButton.vue";
 export default {
   components: { RadioButton },
   setup() {
+    onMounted(async () => {
+      await store.dispatch("getPreguntas");
+      crearArray();
+    });
     const store = useStore();
     const mostrar = ref(false);
     const picked = ref("");
     const contador = ref(0);
+    const preguntas = ref([]);
 
-    const preguntas = store.state.preguntas;
     const pregunta = ref([]);
     const arrayAnswer = ref([]);
     const lista = ref([0, 1, 2, 3]);
     const random = ref([]);
 
-    const generateRan = () => {
+    const generateRan = async () => {
       lista.value = lista.value.sort(function() {
         return Math.random() - 0.5;
       });
       random.value = lista.value;
     };
-
-    const crearArray = () => {
-      pregunta.value = preguntas[contador.value];
+    const getPregunta = async (pregun) => {
       generateRan();
-      arrayAnswer.value.push(pregunta.value.correct_answer);
-      pregunta.value.incorrect_answers.forEach((element) => {
+      arrayAnswer.value.push(await pregun.correct_answer);
+      await pregun.incorrect_answers.forEach((element) => {
         arrayAnswer.value.push(element);
       });
       arrayAnswer.value = arrayAnswer.value.map((i) => {
         return unescape(i);
       });
-      console.log(pregunta);
+    };
+    const crearArray = async () => {
+      preguntas.value = await store.state.preguntas;
+      pregunta.value = await preguntas.value[contador.value];
+      await getPregunta(pregunta.value);
     };
 
     const comprobar = () => {
@@ -113,8 +119,6 @@ export default {
     const category = computed(() => {
       return unescape(pregunta.value.category);
     });
-
-    crearArray();
     return {
       picked,
       contador,
@@ -125,6 +129,7 @@ export default {
       enconde,
       category,
       mostrar,
+      preguntas,
     };
   },
 };
